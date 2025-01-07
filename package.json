@@ -1,0 +1,32 @@
+{
+  "name": "graphql-assignment",
+  "version": "1.0.0",
+  "description": "graphql assignment for full stack open -course",
+  "main": "index.js",
+  "scripts": {
+    "test": "test",
+    "dev": "nodemon ./index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/simojjuho/graphql-assignment-library.git"
+  },
+  "keywords": [
+    "graphqul",
+    "backend",
+    "javascript"
+  ],
+  "author": "Juho Simojoki",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/simojjuho/graphql-assignment-library/issues"
+  },
+  "homepage": "https://github.com/simojjuho/graphql-assignment-library#readme",
+  "devDependencies": {
+    "nodemon": "^3.1.9"
+  },
+  "dependencies": {
+    "@apollo/server": "^4.11.3",
+    "graphql": "^16.10.0"
+  }
+}
