@@ -1,4 +1,4 @@
-const mongoose = require('mongoose')
+const mongoose = require('../../infrastucture/mongodb')
 const uniqueValidator = require('mongoose-unique-validator')
 
 const schema = new mongoose.Schema({

@@ -1,12 +1,9 @@
 const mongoose = require('mongoose')
-const Book = require('../core/models/book')
-const Author = require('../core/models/Author')
 
-const CONNECTION_STRING = process.env.MONGODB_URI_DEV
+const { CONNECTION_STRING } = require('../utils/config')
 mongoose.set('strictQuery', false)
 
 console.log('Connecting to the database...')
-
 mongoose.connect(CONNECTION_STRING)
   .then(() => {
     console.log('Connected to MongoDB')
@@ -14,3 +11,5 @@ mongoose.connect(CONNECTION_STRING)
   .catch((error) => {
     console.log('Error connecting to MongoDB')
   })
+
+  module.exports = mongoose

@@ -1,5 +1,8 @@
+const {  v4: uuidv4 } = require('uuid')
 const authors = require('../entities/authors')
 const books = require('../entities/books')
+const Book = require('../models/Book')
+const Author = require('../models/Author')
 
 const resolvers = {
   Author: {
@@ -8,33 +11,33 @@ const resolvers = {
     }
   },
   Query: {
-    bookCount: () => books.length,
-    authorCount: () => authors.length,
+    bookCount: () => Book.find({}).length,
+    authorCount: () => Author.find({}).length,
     allBooks: (root, args) => {
       if(!args.author && !args.genre)
-        return books
-      let filteredBooks = books
+        return Book.find({})
+      let filteredBooks
       if(args.author)
-        filteredBooks = filteredBooks.filter(b => b.author === args.author)
+        filteredBooks = Book.filter(b => b.author === args.author)
       if(args.genre)
-        filteredBooks = filteredBooks.filter(b => b.genres.includes(args.genre))
+        filteredBooks = Book.filter(b => b.genres.includes(args.genre))
       return filteredBooks
     },
     allAuthors: () => {
-        return authors
+        return Author.find({})
     }
   },
 
   Mutation: {
-    addBook: (root, args) => {
-      const newBook = { ...args, id: uuidv4() }
-      const author = authors.find(a => a.name === newBook.author)
+    addBook: async (root, args) => {
+      const newBook = new Book({ ...args, author: {} })
+      const author = await Author.findOne({ name: args.author })
       if(!author) {
-        const newAuthor = { name: args.author, id: uuidv4() }
-        authors = authors.concat(newAuthor)
+        const newAuthor = new Author({ name: args.author })
+        newAuthor.save()        
       }
-      books = books.concat(newBook)
-      return newBook
+      newBook.author = author
+      return newBook.save()
     },
     editAuthor: (root, args) => {
       const author = authors.find(a => a.name === args.name)

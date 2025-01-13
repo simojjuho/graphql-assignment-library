@@ -1,4 +1,4 @@
-const mongoose = require('mongoose')
+const mongoose = require('../../infrastucture/mongodb')
 const uniqueValidator = require('mongoose-unique-validator')
 
 
@@ -10,7 +10,7 @@ const schema = new mongoose.Schema({
     minlength: 5
   },
   published: {
-    type: number
+    type: Number
   },
   author: {
     type: mongoose.Schema.Types.ObjectId,
