@@ -1,4 +1,3 @@
-const {  v4: uuidv4 } = require('uuid')
 const authors = require('../entities/authors')
 const books = require('../entities/books')
 const Book = require('../models/Book')
@@ -13,18 +12,16 @@ const resolvers = {
   Query: {
     bookCount: () => Book.find({}).length,
     authorCount: () => Author.find({}).length,
-    allBooks: (root, args) => {
-      if(!args.author && !args.genre)
-        return Book.find({})
-      let filteredBooks
-      if(args.author)
-        filteredBooks = Book.filter(b => b.author === args.author)
-      if(args.genre)
-        filteredBooks = Book.filter(b => b.genres.includes(args.genre))
-      return filteredBooks
+    allBooks: async (root, args) => {
+      if(!args.author || !args.genre) {
+        return await Book.find({}).populate('author')
+      }
+
+      return await Book.find({author: { name: args.author }})
+
     },
-    allAuthors: () => {
-        return Author.find({})
+    allAuthors: async () => {
+      return await Author.find({})
     }
   },
 
