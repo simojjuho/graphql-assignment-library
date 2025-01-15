@@ -2,6 +2,7 @@ const authors = require('../entities/authors')
 const books = require('../entities/books')
 const Book = require('../models/Book')
 const Author = require('../models/Author')
+const { GraphQLError } = require('graphql')
 
 const resolvers = {
   Author: {
@@ -40,6 +41,13 @@ const resolvers = {
 
   Mutation: {
     addBook: async (root, args) => {
+      if(args.title.length < 6 ||args.author.length < 5)
+        throw new GraphQLError('Book title or author name too short', {
+          extensions: {
+            code: 'BAD_USER_INPUT',
+            invalidArgs: [args.title, args.author.name]
+          }
+        })
       const newBook = new Book({ ...args, author: {} })
       let author = await Author.findOne({ name: args.author })
       if(!author) {
