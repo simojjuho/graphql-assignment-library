@@ -10,8 +10,14 @@ const resolvers = {
     }
   },
   Query: {
-    bookCount: () => Book.find({}).length,
-    authorCount: () => Author.find({}).length,
+    bookCount: async () => {
+      const books = await Book.find({})
+      return books.length
+    },
+    authorCount: async () => {
+      const authors = await Author.find({})
+      return authors.length
+    },
     allBooks: async (root, args) => {
       if(!args.author && !args.genre) {
         return await Book.find({}).populate('author')
