@@ -49,14 +49,14 @@ const resolvers = {
       newBook.author = author
       return await newBook.save()
     },
-    editAuthor: (root, args) => {
-      const author = authors.find(a => a.name === args.name)
+    editAuthor: async (root, args) => {
+      const author = await Author.findOne({ name: args.name })
       if(!author) {
         return null
       }
       author.born = args.born
-      authors = authors.map(a => a.name === author.name ? author : a)
-      return author
+      console.log(author)
+      return await author.save()
     }
   }
 }
