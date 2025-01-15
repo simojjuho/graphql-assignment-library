@@ -5,8 +5,10 @@ const Author = require('../models/Author')
 
 const resolvers = {
   Author: {
-    bookCount: (root, args) => {
-      return books.filter(b => b.author === root.name).length
+    bookCount: async (root, args) => {
+      const books = await Book.find({}).populate('author')
+      console.log(root)
+      return books.filter(b => b.author.name === root.name).length
     }
   },
   Query: {
