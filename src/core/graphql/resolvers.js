@@ -1,8 +1,11 @@
+const jwt = require('jsonwebtoken')
+const { GraphQLError } = require('graphql')
 const authors = require('../entities/authors')
 const books = require('../entities/books')
 const Book = require('../models/Book')
 const Author = require('../models/Author')
-const { GraphQLError } = require('graphql')
+const User = require('../models/User')
+const { TOKEN } = require('../../utils/config')
 
 const resolvers = {
   Author: {
@@ -36,6 +39,10 @@ const resolvers = {
     },
     allAuthors: async () => {
       return await Author.find({})
+    },
+    me: async (root, args, context) => {
+      console.log(context)
+      return context
     }
   },
 
@@ -65,7 +72,37 @@ const resolvers = {
       author.born = args.born
       console.log(author)
       return await author.save()
-    }
+    },
+    createUser: async (root, args) => {
+      const newUser = await new User({ username: args.username, favoriteGenre: args.favoriteGenre })
+      return newUser.save()
+        .catch(error => {
+          throw new GraphQLError('Failed creating user', {
+            extensions: {
+              code: 'BAD_USER_INPUT',
+              invalidArgs: args.username,
+              error
+            }
+          })
+        })
+    },
+    login: async (root, args) => {
+      const user = await User.findOne({username: args.username})
+
+      if( !user || args.password !== 'secret' ) {
+        throw new GraphQLError('Wrong username or password', {
+          extensions: {
+            code: 'BAD_USER_INPUT'
+          }
+        })
+      }
+
+      const userForToken = {
+        username: user.username,
+        id: user._id,
+      }
+      return { value: jwt.sign( userForToken, TOKEN)  }
+    },
   }
 }
 
