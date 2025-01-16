@@ -11,7 +11,6 @@ const resolvers = {
   Author: {
     bookCount: async (root, args) => {
       const books = await Book.find({}).populate('author')
-      console.log(root)
       return books.filter(b => b.author.name === root.name).length
     }
   },
@@ -83,7 +82,6 @@ const resolvers = {
         return null
       }
       author.born = args.born
-      console.log(author)
       return await author.save()
     },
     createUser: async (root, args) => {
