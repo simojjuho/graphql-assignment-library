@@ -41,13 +41,19 @@ const resolvers = {
       return await Author.find({})
     },
     me: async (root, args, context) => {
-      console.log(context)
       return context
     }
   },
 
   Mutation: {
-    addBook: async (root, args) => {
+    addBook: async (root, args, context) => {
+      if(!context.username) {
+        throw new GraphQLError('User must be logged in', {
+          extensions: {
+            code: 'BAD_USER_INPUT'
+          }
+        })
+      }
       if(args.title.length < 6 ||args.author.length < 5)
         throw new GraphQLError('Book title or author name too short', {
           extensions: {
@@ -64,7 +70,14 @@ const resolvers = {
       newBook.author = author
       return await newBook.save()
     },
-    editAuthor: async (root, args) => {
+    editAuthor: async (root, args, context) => {
+      if(!context.username) {
+        throw new GraphQLError('User must be logged in', {
+          extensions: {
+            code: 'BAD_USER_INPUT'
+          }
+        })
+      }
       const author = await Author.findOne({ name: args.name })
       if(!author) {
         return null
