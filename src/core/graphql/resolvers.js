@@ -1,9 +1,12 @@
 import jwt from 'jsonwebtoken'
+import { PubSub } from 'graphql-subscriptions'
 import { GraphQLError } from 'graphql'
 import { Book } from '../models/Book.js'
 import { Author } from '../models/Author.js'
 import { User } from '../models/User.js'
 import { TOKEN } from '../../utils/config.js'
+
+const pubsub = new PubSub()
 
 export const resolvers = {
   Author: {
@@ -65,7 +68,11 @@ export const resolvers = {
         await author.save()
       }
       newBook.author = author
-      return await newBook.save()
+      await newBook.save()
+
+      pubsub.publish('BOOK_ADDED', { bookAdded: newBook })
+
+      return newBook
     },
     editAuthor: async (root, args, context) => {
       if(!context.username) {
@@ -112,5 +119,10 @@ export const resolvers = {
       }
       return { value: jwt.sign( userForToken, TOKEN)  }
     },
-  }
+  },
+  Subscription: {
+    bookAdded: {
+      subscribe: () => pubsub.asyncIterableIterator('BOOK_ADDED')
+    },
+  },
 }
