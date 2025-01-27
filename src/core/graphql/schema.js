@@ -1,4 +1,4 @@
-const typeDefs = `
+ export const typeDefs = `
   type User {
     username: String!
     favoriteGenre: String!
@@ -23,6 +23,10 @@ const typeDefs = `
     genres: [String!]!
     id: ID!
   }
+
+  type Subscription {
+    bookAdded: Book!
+  }    
 
   type Query {
     bookCount: Int
@@ -54,7 +58,5 @@ const typeDefs = `
       username: String!
       password: String!
     ): Token
-  }
+}
 `
-
-module.exports = typeDefs

@@ -1,6 +1,6 @@
-const mongoose = require('mongoose')
+import mongoose from 'mongoose'
+import { CONNECTION_STRING } from '../utils/config.js'
 
-const { CONNECTION_STRING } = require('../utils/config')
 mongoose.set('strictQuery', false)
 
 console.log('Connecting to the database...')
@@ -12,4 +12,4 @@ mongoose.connect(CONNECTION_STRING)
     console.log('Error connecting to MongoDB')
   })
 
-  module.exports = mongoose
+  export default mongoose

@@ -1,13 +1,11 @@
-const jwt = require('jsonwebtoken')
-const { GraphQLError } = require('graphql')
-const authors = require('../entities/authors')
-const books = require('../entities/books')
-const Book = require('../models/Book')
-const Author = require('../models/Author')
-const User = require('../models/User')
-const { TOKEN } = require('../../utils/config')
+import jwt from 'jsonwebtoken'
+import { GraphQLError } from 'graphql'
+import { Book } from '../models/Book.js'
+import { Author } from '../models/Author.js'
+import { User } from '../models/User.js'
+import { TOKEN } from '../../utils/config.js'
 
-const resolvers = {
+export const resolvers = {
   Author: {
     bookCount: async (root, args) => {
       const books = await Book.find({}).populate('author')
@@ -116,5 +114,3 @@ const resolvers = {
     },
   }
 }
-
-module.exports = resolvers
