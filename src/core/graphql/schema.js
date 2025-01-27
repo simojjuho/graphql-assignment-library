@@ -13,7 +13,8 @@
       name: String!
       id: ID!
       born: Int
-      bookCount: String
+      bookCount: Int
+      books: [Book]!
   }
 
   type Book {

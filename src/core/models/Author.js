@@ -1,5 +1,6 @@
 import mongoose from '../../infrastucture/mongodb.js'
 import uniqueValidator from 'mongoose-unique-validator'
+import { Book } from './Book.js'
 
 const schema = new mongoose.Schema({
   name: {
@@ -11,6 +12,10 @@ const schema = new mongoose.Schema({
   born: {
     type: Number
   },
+  books: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Book'
+  }]
 })
 
 schema.plugin(uniqueValidator)

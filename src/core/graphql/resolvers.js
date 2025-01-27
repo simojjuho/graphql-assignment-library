@@ -11,8 +11,7 @@ const pubsub = new PubSub()
 export const resolvers = {
   Author: {
     bookCount: async (root, args) => {
-      const books = await Book.find({}).populate('author')
-      return books.filter(b => b.author.name === root.name).length
+      return root.books.length
     }
   },
   Query: {
@@ -38,7 +37,8 @@ export const resolvers = {
       return books
     },
     allAuthors: async () => {
-      return await Author.find({})
+      const authors = await Author.find({}).populate('books')
+      return authors
     },
     me: async (root, args, context) => {
       return context
@@ -47,6 +47,7 @@ export const resolvers = {
 
   Mutation: {
     addBook: async (root, args, context) => {
+      //User authorization
       if(!context.username) {
         throw new GraphQLError('User must be logged in', {
           extensions: {
@@ -54,6 +55,7 @@ export const resolvers = {
           }
         })
       }
+      //User input validation
       if(args.title.length < 6 ||args.author.length < 5)
         throw new GraphQLError('Book title or author name too short', {
           extensions: {
@@ -61,18 +63,18 @@ export const resolvers = {
             invalidArgs: [args.title, args.author.name]
           }
         })
-      const newBook = new Book({ ...args, author: {} })
+      //Creating new instances of Book and Author
       let author = await Author.findOne({ name: args.author })
-      if(!author) {
+      if(!author){
         author = new Author({ name: args.author })
-        await author.save()
       }
-      newBook.author = author
+      const newBook = new Book({ ...args, author: author._id })
+      author.books = author.books.concat(newBook._id)
       await newBook.save()
-
+      await author.save()
       pubsub.publish('BOOK_ADDED', { bookAdded: newBook })
 
-      return newBook
+      return newBook.populate('author')
     },
     editAuthor: async (root, args, context) => {
       if(!context.username) {
